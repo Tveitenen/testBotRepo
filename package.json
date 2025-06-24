@@ -1,0 +1,33 @@
+{
+  "name": "egdeapitest",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "postinstall": "npm run build",
+    "start": "node dist/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.13.0",
+    "botbuilder": "^4.17.0-blobs1",
+    "discord.js": "^14.20.0",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "node": "^24.2.0",
+    "node-fetch": "^3.3.2",
+    "openai": "^5.5.1"
+  },
+  "devDependencies": {
+    "@types/dotenv": "^8.2.3",
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.0.3",
+    "@types/node-fetch": "^2.6.12",
+    "@types/ws": "^8.18.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
+  }
+}
