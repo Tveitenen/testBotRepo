@@ -1,28 +1,36 @@
-import { spawn } from "child_process";
-import { Client } from "@modelcontextprotocol/sdk/client/index.js";
-import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
+// src/mcpClient.ts
+
 import dotenv from "dotenv";
 dotenv.config();
 
+import { Client } from "@modelcontextprotocol/sdk/client/index.js";
+import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
+
 let mcpClient: Client | null = null;
+
 export async function getMcpClient(): Promise<Client> {
   if (mcpClient) return mcpClient;
 
-  // 1) Start MCP‐serveren som egen prosess
-  const proc = spawn("server", ["stdio"], {
-    stdio: ["pipe", "pipe", "inherit"],
+  const token = process.env.GITHUB_TOKEN;
+  if (!token) throw new Error("GITHUB_MCP_PAT must be set in .env");
+
+  const endpoint = "https://api.githubcopilot.com/mcp/";
+  const url = new URL(endpoint);
+
+  // Pass your Authorization header via `requestInit`
+  const transport = new StreamableHTTPClientTransport(url, {
+    requestInit: {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      }
+    }
   });
 
-  // 2) Pakk prosess‐info inn i StdioServerParameters
-  const params = {
-    process: proc,
-    command: "server",       // navnet på binaryen
-    args: ["stdio"],         // samme args som du spawner med
-  };
-
-  // 3) Opprett transport og client
-  const transport = new StdioClientTransport(params);
-  mcpClient = new Client({ name: "edge-ai-client", version: "1.0.0" });
+  mcpClient = new Client({
+    name: "github-mcp-client",
+    version: "1.0.0",
+    transport
+  });
   await mcpClient.connect(transport);
 
   return mcpClient;

@@ -1,4 +1,4 @@
-// src/mock-edge-ai/server.ts
+// src/server.ts
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -68,7 +68,7 @@ const chatHandler: RequestHandler<{}, ChatResponse, ChatRequest> = async (req, r
     .filter(t => t.name.includes("issue"))
     .map(toFunctionSpec);
 
-  // 3) Første LLM-kall
+  // 3) Første LLM-kalla
   const baseParams = { model: "gpt-4o", messages: session.messages, temperature: 0 };
   const params = issueFuncs.length > 0
     ? { ...baseParams, functions: issueFuncs, function_call: "auto" as const }
@@ -82,7 +82,7 @@ const chatHandler: RequestHandler<{}, ChatResponse, ChatRequest> = async (req, r
     const args = JSON.parse(argsJson!);
     session.messages.push({ role: "assistant", function_call: { name, arguments: argsJson } });
 
-    // 5) Utfør verktøykallet med robust error-håndtering
+    // 5) Utfør verktøykallet med error-håndtering
     // 5) Dynamisk hent owner (env eller get_me)
     let owner = process.env.GITHUB_OWNER;
     if (!owner) {
